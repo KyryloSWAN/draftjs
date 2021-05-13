@@ -86,10 +86,7 @@ export const encodeLinkString = (str: string): RawDraftContentState => {
       entryRanges.push({
         key: tagCount,
         offset: openTagIdx,
-        // offset: openTagIndex,
-        // length: length(linkText),
-        // length: linkText.length,
-        length: 1,
+        length: length(linkText),
       });
 
       entityMap[tagCount] = {
