@@ -129,7 +129,7 @@ const decorator: DraftDecoratorType = new CompositeDecorator([
 ]);
 
 const sampleMarkup =
-  `🇺🇦<a href="http://www.f1.com">1</a>2`;
+  `🇺🇦<a href="http://www.f1.com">1</a>2🔔`;
   // `🇺🇦🇺🇦🇺🇦🇺🇦`;
   // "🇺🇦tttt🔔aaaa🇺🇦bbbb";
 /* `🇺🇦0<a href="https://f0.com"></a>1<a href="http://www.f1.com">F1</a>2<a href="http://www.f2.com">F2</a>3
@@ -215,10 +215,10 @@ const LinkEditorFC: FC = () => {
   };
 
   const logState = (): void => {
-    const content = editorState.getCurrentContent();
-    /* console.log(JSON.stringify(content.toMap()));
-    console.log(decodeContentToStr(content)); */
-    console.log("entity 0")
+    // const content = editorState.getCurrentContent().toJS();
+    // console.log(JSON.stringify(content.toMap()));
+    // console.log(decodeContentToStr(content));
+    // console.log("EntityMap:", JSON.stringify(content.getEntityMap()));
   };
 
   const onURLChange = (e: any) => setURLValue(e.target.value);
