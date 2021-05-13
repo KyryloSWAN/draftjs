@@ -21,6 +21,7 @@ import { Options, stateToHTML } from "draft-js-export-html";
 import { FaLink, FaUnlink } from "react-icons/fa";
 import { isEntityTypeSelected } from "../utils/links_utils";
 import { encodeLinkString, decodeContentToStr } from "../utils/encode_decode";
+import styled, { css } from "styled-components";
 
 const styles = {
   root: {
@@ -72,18 +73,35 @@ const LinkSpan = (props: LinkSpanProps) => {
   return <a href={url}>{props.children}</a>;
 };
 
+const EmojiSpanComponent = styled.span`
+    font-size: 0;
+
+    &::before {
+        position: relative;
+        content: attr(data-content);
+        color: #000;
+        font-size: 12px;
+        /* height: auto;
+        width: fit-content;
+        display: inline-block;
+        cursor: pointer;
+        white-space: nowrap;
+        font-weight: 700; */
+    }
+`;
+
 const EmojiSpan = (props: LinkSpanProps) => {
   const { emojiUnicode } = props.contentState
     .getEntity(props.entityKey)
     .getData();
-  console.log("props.children:", props.children)
+  console.log("emojiUnicode:", emojiUnicode);
+  console.log("EmojiSpan props:", props);
   return (
-    <>
-      <span>
-        {emojiUnicode}
+    <span data-offset-key={props.offsetkey} id={props.entityKey}>
+      <EmojiSpanComponent data-content={emojiUnicode}>
         {props.children}
-      </span>
-    </>
+      </EmojiSpanComponent>
+    </span>
   );
 };
 
@@ -128,10 +146,11 @@ const decorator: DraftDecoratorType = new CompositeDecorator([
   },
 ]);
 
-const sampleMarkup =
-  `🇺🇦<a href="http://www.f1.com">1</a>2🔔`;
-  // `🇺🇦🇺🇦🇺🇦🇺🇦`;
-  // "🇺🇦tttt🔔aaaa🇺🇦bbbb";
+const sampleMarkup = 
+// `🇺🇦<a href="http://www.f1.com">12345</a>2🔔`;
+`🌿<a href="http://www.f1.com">12345</a>2🔔`;
+// `🇺🇦🇺🇦🇺🇦🇺🇦`;
+// "🇺🇦tttt🔔aaaa🇺🇦bbbb";
 /* `🇺🇦0<a href="https://f0.com"></a>1<a href="http://www.f1.com">F1</a>2<a href="http://www.f2.com">F2</a>3
 
 попукивая по <a href="http://a.ua">площади</a> прошелся <a href="https://persioner.ru">пенсионер П</a>рохиндеев
@@ -185,7 +204,7 @@ const LinkEditorFC: FC = () => {
 
   const onFocusEditor = (): void => {
     if (editorRef.current) {
-      ((editorRef.current as unknown) as Editor).focus();
+      (editorRef.current as unknown as Editor).focus();
     }
   };
 
@@ -215,10 +234,10 @@ const LinkEditorFC: FC = () => {
   };
 
   const logState = (): void => {
-    // const content = editorState.getCurrentContent().toJS();
-    // console.log(JSON.stringify(content.toMap()));
+    const content = editorState.getCurrentContent();
+    console.log(JSON.stringify(content.toMap()));
+    console.log(JSON.stringify(content.toJS()));
     // console.log(decodeContentToStr(content));
-    // console.log("EntityMap:", JSON.stringify(content.getEntityMap()));
   };
 
   const onURLChange = (e: any) => setURLValue(e.target.value);
@@ -294,7 +313,7 @@ const LinkEditorFC: FC = () => {
             onChange={onURLChange}
             ref={inputRef}
             style={styles.urlInput}
-            type="text"
+            type='text'
             value={urlValue}
             onKeyDown={onLinkInputKeyDown}
           />
@@ -328,9 +347,7 @@ const LinkEditorFC: FC = () => {
 
   return (
     <div style={styles.root}>
-      <div style={{ marginBottom: 10 }}>
-        {sampleMarkup}
-      </div>
+      <div style={{ marginBottom: 10 }}>{sampleMarkup}</div>
       <div style={styles.buttons}>
         <button
           onMouseDown={promptForLink}
@@ -346,30 +363,30 @@ const LinkEditorFC: FC = () => {
         </button>
       </div>
       {urlInput()}
-      <div style={styles.editor} onClick={onFocusEditor} id="editor-container">
+      <div style={styles.editor} onClick={onFocusEditor} id='editor-container'>
         <Editor
           editorState={editorState}
           onChange={onEditorChange}
-          placeholder="Enter some text..."
+          placeholder='Enter some text...'
           ref={editorRef}
         />
       </div>
       <input
         onClick={logState}
         style={styles.button}
-        type="button"
-        value="Log State"
+        type='button'
+        value='Log State'
       />
       <input
         onClick={logSelection}
         style={styles.button}
-        type="button"
-        value="Log Selection"
+        type='button'
+        value='Log Selection'
       />
       <br />
       <textarea
-        className="source"
-        placeholder="Editor Source"
+        className='source'
+        placeholder='Editor Source'
         value={stateToHTML(editorState.getCurrentContent(), options)}
         style={{ width: "100%" }}
         rows={5}
