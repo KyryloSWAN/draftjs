@@ -35,7 +35,7 @@ export const encodeLinkString = (str: string): RawDraftContentState => {
     let entryRanges: Array<RawDraftEntityRange> = [];
 
     /* emojies start */
-  
+    debugger
     const emojies = findAllEmojiInStr(text, tagCount);
     if (emojies.counter) {
       Object.assign(entityMap, emojies.entityMap);
@@ -99,6 +99,7 @@ export const encodeLinkString = (str: string): RawDraftContentState => {
 
       tagCount++;
     }
+    
     blocks.push({
       type: "unstyled",
       text,
