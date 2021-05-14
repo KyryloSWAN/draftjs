@@ -29,27 +29,25 @@ export const encodeLinkString = (str: string): RawDraftContentState => {
   const blocks: Array<RawDraftContentBlock> = [];
   const entityMap: { [key: string]: RawDraftEntity } = {};
   let tagCount = 0;
-  debugger
   for (const blockText of blockParts) {
     let text = blockText;
     let entryRanges: Array<RawDraftEntityRange> = [];
 
     /* emojies start */
-    debugger
-    const emojies = findAllEmojiInStr(text, tagCount);
+    /* const emojies = findAllEmojiInStr(text, tagCount);
     if (emojies.counter) {
       Object.assign(entityMap, emojies.entityMap);
       text = emojies.text;
       entryRanges = [...emojies.entryRanges];
       tagCount = emojies.counter;
-    }
+    } */
     
     /* emojies end */
     
     /* link start*/
-    while (text.indexOf(LINK_TAG_START_SEPARATOR) !== -1) {
+    while (indexOf(text,LINK_TAG_START_SEPARATOR) !== -1) {
       const openTagIndex = indexOf(text, LINK_TAG_START_SEPARATOR);
-      const openTagIdx = text.indexOf(LINK_TAG_START_SEPARATOR)
+      const openTagIdx = indexOf(text,LINK_TAG_START_SEPARATOR)
       const closeTagIndex = indexOf(text, LINK_TAG_END_SEPARATOR);
       const urlEndIndex = indexOf(text, LINK_URL_END_SEPARATOR);
       const emptyTagIndex = indexOf(text, LINK_TAG_EMPTY_SEPARATOR);

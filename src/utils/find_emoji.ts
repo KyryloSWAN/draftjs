@@ -28,8 +28,8 @@ export const findAllEmojiInStr = (str: string, entityIndex: number = 0) => {
           key: index,
           offset: item.index,
           // length: 2,
-          length: length(item[0]),
-          // length: item[0].length,
+          // length: length(item[0]),
+          length: item[0].length,
           // input: item.input,
         });
       }
@@ -45,7 +45,7 @@ export const findAllEmojiInStr = (str: string, entityIndex: number = 0) => {
   };
 };
 
-// console.log(findAllEmojiInStr("🇺🇦ttt🔔"));
+console.log(findAllEmojiInStr("🇺🇦ttt🔔"));
 // console.log(findAllEmojiInStr(`😍<a href="http://www.f1.com">1</a>2🔔`)/* .entityMap[1] */);
  /* 
   test regex.exec

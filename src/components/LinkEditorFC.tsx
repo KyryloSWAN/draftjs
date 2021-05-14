@@ -94,13 +94,17 @@ const EmojiSpan = (props: LinkSpanProps) => {
   const { emojiUnicode } = props.contentState
     .getEntity(props.entityKey)
     .getData();
-  console.log("emojiUnicode:", emojiUnicode);
-  console.log("EmojiSpan props:", props);
+  /* console.log("emojiUnicode:", emojiUnicode);
+  console.log("EmojiSpan props:", props); */
   return (
-    <span data-offset-key={props.offsetkey} id={props.entityKey}>
-      <EmojiSpanComponent data-content={emojiUnicode}>
-        {props.children}
-      </EmojiSpanComponent>
+    // <span data-offset-key={props.offsetkey} id={props.entityKey}>
+    //   <EmojiSpanComponent data-content={emojiUnicode}>
+    //     {props.children}
+    //   </EmojiSpanComponent>
+    // </span> 
+    <span>
+      {emojiUnicode}
+      {/* {props.children} */}
     </span>
   );
 };
@@ -136,10 +140,10 @@ const findEmojiEntities = (
 };
 
 const decorator: DraftDecoratorType = new CompositeDecorator([
-  {
+  /* {
     strategy: findEmojiEntities,
     component: EmojiSpan,
-  },
+  }, */
   {
     strategy: findLinkEntities,
     component: LinkSpan,
@@ -148,7 +152,7 @@ const decorator: DraftDecoratorType = new CompositeDecorator([
 
 const sampleMarkup = 
 // `🇺🇦<a href="http://www.f1.com">12345</a>2🔔`;
-`🌿<a href="http://www.f1.com">12345</a>2🔔`;
+`🇺🇦<a href="http://www.f1.com">1</a>2`;
 // `🇺🇦🇺🇦🇺🇦🇺🇦`;
 // "🇺🇦tttt🔔aaaa🇺🇦bbbb";
 /* `🇺🇦0<a href="https://f0.com"></a>1<a href="http://www.f1.com">F1</a>2<a href="http://www.f2.com">F2</a>3
