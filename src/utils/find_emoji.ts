@@ -45,7 +45,7 @@ export const findAllEmojiInStr = (str: string, entityIndex: number = 0) => {
   };
 };
 
-console.log(findAllEmojiInStr("🇺🇦ttt🔔"));
+// console.log(findAllEmojiInStr("🇺🇦ttt🔔"));
 // console.log(findAllEmojiInStr(`😍<a href="http://www.f1.com">1</a>2🔔`)/* .entityMap[1] */);
  /* 
   test regex.exec
@@ -56,3 +56,4 @@ console.log(findAllEmojiInStr("🇺🇦ttt🔔"));
   } */
 // console.log(findAllEmojiInStr("<a href", 5));
 
+// length("🇺🇦")

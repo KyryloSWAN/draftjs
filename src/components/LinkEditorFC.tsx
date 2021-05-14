@@ -21,7 +21,6 @@ import { Options, stateToHTML } from "draft-js-export-html";
 import { FaLink, FaUnlink } from "react-icons/fa";
 import { isEntityTypeSelected } from "../utils/links_utils";
 import { encodeLinkString, decodeContentToStr } from "../utils/encode_decode";
-import styled, { css } from "styled-components";
 
 const styles = {
   root: {
@@ -73,42 +72,6 @@ const LinkSpan = (props: LinkSpanProps) => {
   return <a href={url}>{props.children}</a>;
 };
 
-const EmojiSpanComponent = styled.span`
-    font-size: 0;
-
-    &::before {
-        position: relative;
-        content: attr(data-content);
-        color: #000;
-        font-size: 12px;
-        /* height: auto;
-        width: fit-content;
-        display: inline-block;
-        cursor: pointer;
-        white-space: nowrap;
-        font-weight: 700; */
-    }
-`;
-
-const EmojiSpan = (props: LinkSpanProps) => {
-  const { emojiUnicode } = props.contentState
-    .getEntity(props.entityKey)
-    .getData();
-  /* console.log("emojiUnicode:", emojiUnicode);
-  console.log("EmojiSpan props:", props); */
-  return (
-    // <span data-offset-key={props.offsetkey} id={props.entityKey}>
-    //   <EmojiSpanComponent data-content={emojiUnicode}>
-    //     {props.children}
-    //   </EmojiSpanComponent>
-    // </span> 
-    <span>
-      {emojiUnicode}
-      {/* {props.children} */}
-    </span>
-  );
-};
-
 // Gets all the links entities in the contentBlock
 // and add them via the callback
 const findLinkEntities = (
@@ -125,25 +88,7 @@ const findLinkEntities = (
   }, callback);
 };
 
-const findEmojiEntities = (
-  contentBlock: ContentBlock,
-  callback: (start: number, end: number) => void,
-  contentState: ContentState
-): void => {
-  contentBlock.findEntityRanges((character) => {
-    const entityKey = character.getEntity();
-    return (
-      entityKey !== null &&
-      contentState.getEntity(entityKey).getType() === "EMOJI"
-    );
-  }, callback);
-};
-
 const decorator: DraftDecoratorType = new CompositeDecorator([
-  /* {
-    strategy: findEmojiEntities,
-    component: EmojiSpan,
-  }, */
   {
     strategy: findLinkEntities,
     component: LinkSpan,
@@ -151,14 +96,11 @@ const decorator: DraftDecoratorType = new CompositeDecorator([
 ]);
 
 const sampleMarkup = 
-// `🇺🇦<a href="http://www.f1.com">12345</a>2🔔`;
-`🇺🇦<a href="http://www.f1.com">1</a>2`;
-// `🇺🇦🇺🇦🇺🇦🇺🇦`;
-// "🇺🇦tttt🔔aaaa🇺🇦bbbb";
-/* `🇺🇦0<a href="https://f0.com"></a>1<a href="http://www.f1.com">F1</a>2<a href="http://www.f2.com">F2</a>3
+// `🏳️‍🌈🇺🇦🔔🇺🇦<a href="http://www.f1.com">12345</a>2🔔`;
+// perfect works 🏳️‍🌈🇺🇦🔔🇺😍👍🏽
+// wrong ❤️❤️
+`✊✋😀🤞🙏🏳️‍🌈🇺🇦🔔🇺😍👍🏽test<a href="http://www.f1.com">1</a>test2🔔`;
 
-попукивая по <a href="http://a.ua">площади</a> прошелся <a href="https://persioner.ru">пенсионер П</a>рохиндеев
-`; */
 
 const rawContent: RawDraftContentState = encodeLinkString(sampleMarkup);
 const blocks: ContentState = convertFromRaw(rawContent);
@@ -332,7 +274,7 @@ const LinkEditorFC: FC = () => {
   // added by cz
   const logSelection = () => {
     onFocusEditor();
-    const selectionState = editorState.getSelection();
+    /* const selectionState = editorState.getSelection();
     const anchorKey = selectionState.getAnchorKey();
     const currentContent = editorState.getCurrentContent();
     const currentContentBlock = currentContent.getBlockForKey(anchorKey);
@@ -345,7 +287,7 @@ const LinkEditorFC: FC = () => {
     console.log("currentContentBlock:", currentContentBlock);
     console.log("start:", start);
     console.log("end:", selectedText);
-    console.log("selectedText:", selectedText);
+    console.log("selectedText:", selectedText); */
     console.log("rawContent:", JSON.stringify(rawContent));
   };
 

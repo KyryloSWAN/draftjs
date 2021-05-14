@@ -19,7 +19,8 @@ import {
   TOKEN_DEFINITION_END_SEPARATOR,
   // TOKEN_HIDDEN_DISPLAY_SYMBOL,
 } from "./tags";
-import { findAllEmojiInStr } from "./find_emoji";
+import { emojiOffsetDiff } from "./graphemes";
+
 /*
     encode string to draft-js RawDraftContentState object
     RawDraftContentState object can be transformed into ContentState object by convertFromRaw function
@@ -33,29 +34,20 @@ export const encodeLinkString = (str: string): RawDraftContentState => {
     let text = blockText;
     let entryRanges: Array<RawDraftEntityRange> = [];
 
-    /* emojies start */
-    /* const emojies = findAllEmojiInStr(text, tagCount);
-    if (emojies.counter) {
-      Object.assign(entityMap, emojies.entityMap);
-      text = emojies.text;
-      entryRanges = [...emojies.entryRanges];
-      tagCount = emojies.counter;
-    } */
-    
-    /* emojies end */
-    
+
     /* link start*/
-    while (indexOf(text,LINK_TAG_START_SEPARATOR) !== -1) {
+    while (indexOf(text, LINK_TAG_START_SEPARATOR) !== -1) {
       const openTagIndex = indexOf(text, LINK_TAG_START_SEPARATOR);
-      const openTagIdx = indexOf(text,LINK_TAG_START_SEPARATOR)
       const closeTagIndex = indexOf(text, LINK_TAG_END_SEPARATOR);
       const urlEndIndex = indexOf(text, LINK_URL_END_SEPARATOR);
       const emptyTagIndex = indexOf(text, LINK_TAG_EMPTY_SEPARATOR);
-      const urlLink = substring(text,
+      const urlLink = substring(
+        text,
         openTagIndex + LINK_TAG_START_SEPARATOR.length,
         urlEndIndex
       );
-      // console.log("openTagIndex:", openTagIndex);
+      const textBeforeLink = substring(text, 0, openTagIndex);
+      const emojiesOffsetDiff = emojiOffsetDiff(textBeforeLink);
 
       let linkText: string;
 
@@ -63,27 +55,29 @@ export const encodeLinkString = (str: string): RawDraftContentState => {
         /* <a href="..."></a> */
         linkText = urlLink;
         text =
-          substring(text,0, openTagIndex) +
+          textBeforeLink +
           urlLink +
-          substring(text,closeTagIndex + LINK_TAG_END_SEPARATOR.length);
+          substring(text, closeTagIndex + LINK_TAG_END_SEPARATOR.length);
       } else {
         /* <a href="...">...</a> */
-        linkText = substring(text,
+        linkText = substring(
+          text,
           urlEndIndex + LINK_URL_END_SEPARATOR.length,
           closeTagIndex
         );
         text =
-          substring(text,0, openTagIndex) +
-          substring(text,
+          textBeforeLink +
+          substring(
+            text,
             urlEndIndex + LINK_URL_END_SEPARATOR.length,
             closeTagIndex
           ) +
-          substring(text,closeTagIndex + LINK_TAG_END_SEPARATOR.length);
+          substring(text, closeTagIndex + LINK_TAG_END_SEPARATOR.length);
       }
 
       entryRanges.push({
         key: tagCount,
-        offset: openTagIdx,
+        offset: openTagIndex + emojiesOffsetDiff,
         length: length(linkText),
       });
 
@@ -97,7 +91,7 @@ export const encodeLinkString = (str: string): RawDraftContentState => {
 
       tagCount++;
     }
-    
+
     blocks.push({
       type: "unstyled",
       text,
@@ -106,10 +100,6 @@ export const encodeLinkString = (str: string): RawDraftContentState => {
       depth: 0,
       inlineStyleRanges: [],
     });
-
-    // console.log("blocks:", JSON.stringify(blocks));
-    // console.log("entityMap", JSON.stringify(entityMap));
-    // console.log(indexOf("🇺🇦1", "1"));
   }
 
   return {
@@ -169,7 +159,7 @@ export const decodeContentToStr = (content: ContentState): string => {
               // entityMap[entityKey].data.emojiUnicode.length +
               entityMap[entityKey].data.emojiUnicode; //?
             // prevEntityOffset = entityRange.offset + 1; //?
-            prevEntityOffset = 
+            prevEntityOffset =
               // entityRange.offset + entityMap[entityKey].data.emojiUnicode.length;
               // entityRange.offset + entityRange.length
               entityRange.offset + 1; //?
@@ -179,7 +169,7 @@ export const decodeContentToStr = (content: ContentState): string => {
         }
       }
       result = result + text.substring(prevEntityOffset, text.length);
-      console.log("result:",result)
+      console.log("result:", result);
       return result;
     })
     .join("\n");
