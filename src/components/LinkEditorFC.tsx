@@ -99,7 +99,7 @@ const sampleMarkup =
 // `🏳️‍🌈🇺🇦🔔🇺🇦<a href="http://www.f1.com">12345</a>2🔔`;
 // perfect works 🏳️‍🌈🇺🇦🔔🇺😍👍🏽
 // wrong ❤️❤️
-`✊✋😀🤞🙏🏳️‍🌈🇺🇦🔔🇺😍👍🏽test<a href="http://www.f1.com">1</a>test2🔔`;
+`test<a href="http://www.f1.com">1</a>test2🔔✊✋😀🤞🙏🏳️‍🌈🇺🇦🔔🇺😍👍🏽`;
 
 
 const rawContent: RawDraftContentState = encodeLinkString(sampleMarkup);
@@ -181,7 +181,7 @@ const LinkEditorFC: FC = () => {
 
   const logState = (): void => {
     const content = editorState.getCurrentContent();
-    console.log(JSON.stringify(content.toMap()));
+    // console.log(JSON.stringify(content.toMap()));
     console.log(JSON.stringify(content.toJS()));
     // console.log(decodeContentToStr(content));
   };

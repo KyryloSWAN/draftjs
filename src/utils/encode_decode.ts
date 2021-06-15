@@ -8,7 +8,7 @@ import {
   convertFromRaw,
 } from "draft-js";
 import { generateRandomKey } from "./random_key";
-import { indexOf, substring, length } from "stringz";
+import { indexOf, substring, substr, length } from "stringz";
 
 import {
   LINK_TAG_START_SEPARATOR,
@@ -33,7 +33,6 @@ export const encodeLinkString = (str: string): RawDraftContentState => {
   for (const blockText of blockParts) {
     let text = blockText;
     let entryRanges: Array<RawDraftEntityRange> = [];
-
 
     /* link start*/
     while (indexOf(text, LINK_TAG_START_SEPARATOR) !== -1) {
@@ -110,75 +109,53 @@ export const encodeLinkString = (str: string): RawDraftContentState => {
 
 export const decodeContentToStr = (content: ContentState): string => {
   const raw = convertToRaw(content);
-  // console.log("raw:", JSON.stringify(raw));
-  const { blocks, entityMap } = raw; //?
+  const { blocks, entityMap } = raw;
   const value = blocks
     .map((block) => {
       if (!block.text.trim()) return "\n";
-      // debugger;
-      const entityRanges = block.entityRanges; //?
-      const text = block.text; //?
-      let result = ""; //?
+      const entityRanges = block.entityRanges;
+      const text = block.text;
+      let result = "";
       let prevEntityOffset = 0;
       for (const entityRange of entityRanges) {
-        //?
-        const entityKey = entityRange.key; //?
-        const entityType = entityMap[entityKey].type; //?
-        const entityOffset = entityRange.offset; //?
-        const entityEndOffset = entityRange.offset + entityRange.length; //?
-        const linkTitle = text.substr(
-          entityOffset,
-          entityRange.length //?
-        );
-        const linkTag =
-          LINK_TAG_START_SEPARATOR +
-          entityMap[entityKey].data.url +
-          LINK_URL_END_SEPARATOR +
-          linkTitle +
-          LINK_TAG_END_SEPARATOR;
-        // debugger;
-        const beforeEntityText = text.substring(
+        const entityKey = entityRange.key;
+        const entityType = entityMap[entityKey].type;
+        const entityOffset = entityRange.offset; 
+        const beforeEntityText = substring(
+          text,
           prevEntityOffset,
           entityRange.offset
-        ); //?
+        );
         switch (entityType) {
           case "TOKEN":
             result =
               result +
-              text.substring(prevEntityOffset, entityRange.offset) +
+              beforeEntityText +
               `${TOKEN_DEFINITION_START_SEPARATOR}${entityMap[entityKey].data.original}${TOKEN_DEFINITION_END_SEPARATOR}`;
             prevEntityOffset = entityRange.offset + 1;
             break;
           case "LINK":
+            const linkTitle = substr(text, entityOffset, entityRange.length); 
+            const linkTag =
+              LINK_TAG_START_SEPARATOR +
+              entityMap[entityKey].data.url +
+              LINK_URL_END_SEPARATOR +
+              linkTitle +
+              LINK_TAG_END_SEPARATOR;
+
             result = result + beforeEntityText + linkTag;
-            prevEntityOffset = entityRange.offset + linkTitle.length;
-            break;
-          case "EMOJI":
-            result =
-              result +
-              // entityMap[entityKey].data.emojiUnicode.length +
-              entityMap[entityKey].data.emojiUnicode; //?
-            // prevEntityOffset = entityRange.offset + 1; //?
             prevEntityOffset =
-              // entityRange.offset + entityMap[entityKey].data.emojiUnicode.length;
-              // entityRange.offset + entityRange.length
-              entityRange.offset + 1; //?
+              entityRange.offset + linkTitle.length + emojiOffsetDiff(result);
             break;
           default:
             break;
         }
       }
-      result = result + text.substring(prevEntityOffset, text.length);
-      console.log("result:", result);
+      result = result + substring(text,prevEntityOffset);
       return result;
     })
     .join("\n");
   return value;
+  
 };
 
-/* // encodeLinkString(`🇺🇦<a href="http://www.f1.com">1</a>2`); //?
-const rawContent = encodeLinkString(`🇺🇦t🔔`); //?
-// console.log("rawContent:");
-console.log(rawContent);
-const testContentState = convertFromRaw(rawContent); //?
-console.log(decodeContentToStr(testContentState)); //?  */
